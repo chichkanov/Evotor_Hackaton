@@ -2,7 +2,12 @@ package ru.qualitylab.evotor.loyaltylab.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -24,8 +29,13 @@ import ru.evotor.framework.core.action.command.open_receipt_command.OpenPaybackR
 import ru.evotor.framework.core.action.command.open_receipt_command.OpenSellReceiptCommand;
 import ru.evotor.framework.core.action.command.print_receipt_command.PrintReceiptCommandResult;
 import ru.evotor.framework.core.action.command.print_receipt_command.PrintSellReceiptCommand;
+import ru.evotor.framework.core.action.event.receipt.before_positions_edited.BeforePositionsEditedEventResult;
+import ru.evotor.framework.core.action.event.receipt.changes.position.IPositionChange;
 import ru.evotor.framework.core.action.event.receipt.changes.position.PositionAdd;
+import ru.evotor.framework.core.action.event.receipt.changes.position.PositionEdit;
 import ru.evotor.framework.core.action.event.receipt.changes.position.SetExtra;
+import ru.evotor.framework.inventory.InventoryApi;
+import ru.evotor.framework.inventory.ProductItem;
 import ru.evotor.framework.payment.PaymentSystem;
 import ru.evotor.framework.payment.PaymentType;
 import ru.evotor.framework.receipt.ExtraKey;
@@ -33,27 +43,103 @@ import ru.evotor.framework.receipt.Payment;
 import ru.evotor.framework.receipt.Position;
 import ru.evotor.framework.receipt.PrintGroup;
 import ru.evotor.framework.receipt.Receipt;
+import ru.evotor.framework.receipt.ReceiptApi;
 import ru.qualitylab.evotor.loyaltylab.R;
+import ru.qualitylab.evotor.loyaltylab.model.ProductUi;
+import ru.qualitylab.evotor.loyaltylab.util.Logger;
 
 public class MainActivity extends IntegrationAppCompatActivity {
 
-    private static final String TAG = "ru.qualitylab.evotor.loyaltylab";
+    private RecommendationAdapter adapter;
+    private Button addButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setToolbar();
+        initRv();
+        initAddBtn();
+    }
+
+    private void initAddBtn() {
+        addButton = findViewById(R.id.btn_recommendation_add);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Receipt receipt = ReceiptApi.getReceipt(getApplicationContext(), Receipt.Type.SELL);
+                Position item2 = receipt.getPositions().get(0);
+
+                List<IPositionChange> changes = new ArrayList<>();
+                ProductItem.Product item = (ProductItem.Product) InventoryApi.getProductByUuid(MainActivity.this, item2.getProductUuid());
+                changes.add(new PositionEdit(
+                        Position.Builder.newInstance(
+                                item.getUuid(),
+                                item.getParentUuid(),
+                                item.getName(),
+                                item.getMeasureName(),
+                                item.getMeasurePrecision(),
+                                item.getPrice(),
+                                new BigDecimal(100)
+                        ).build()
+                ));
+                Set<ExtraKey> set = new HashSet<>();
+                set.add(new ExtraKey(null, null, "Тест EDIT"));
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("someSuperKey", "AWESOME EDIT");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                SetExtra extra = new SetExtra(object);
+                setIntegrationResult(new BeforePositionsEditedEventResult(changes, extra));
+
+                Logger.log("Add click");
+                Logger.log("Add items size: " + adapter.getSelectedItemsPositions().size());
+                Logger.log("Before add size: " + String.valueOf(ReceiptApi.getReceipt(getApplicationContext(), Receipt.Type.SELL).getPositions().size()));
+
+
+            }
+        });
     }
 
     private void setToolbar() {
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
         setTitle(R.string.app_name);
+    }
+
+    private void initRv() {
+        RecyclerView recyclerView = findViewById(R.id.rv_recommendation);
+        adapter = new RecommendationAdapter(getFakeDataset(), new RecommendationAdapter.RecommendationCLickListener() {
+            @Override
+            public void onCLick(int position) {
+                ProductUi product = adapter.getItemAtPosition(position);
+                product.setEnabled(!product.isEnabled());
+                addButton.setEnabled(adapter.isAnyItemSelected());
+
+            }
+        });
+
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+    }
+
+    private List<ProductUi> getFakeDataset() {
+        List<ProductUi> list = new ArrayList<>();
+        list.add(new ProductUi("Водочка Грей Гус", 1500, false));
+        list.add(new ProductUi("Водочка Хорошая", 200, false));
+        list.add(new ProductUi("Водочка Каждый День", 108, false));
+        list.add(new ProductUi("Пиво Балтика", 70, false));
+        list.add(new ProductUi("Сухарики Воронцовские", 30, false));
+        list.add(new ProductUi("Пакет Маечка", 2, false));
+        return list;
     }
 
     @Override
@@ -239,6 +325,5 @@ public class MainActivity extends IntegrationAppCompatActivity {
             }
         });
     }
-
 
 }

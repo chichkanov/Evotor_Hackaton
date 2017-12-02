@@ -1,19 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:background="#37474F"
-              android:orientation="vertical"
-              tools:context="ru.qualitylab.evotor.loyaltylab.ui.MainActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#37474F"
+                android:orientation="vertical"
+                tools:context="ru.qualitylab.evotor.loyaltylab.ui.MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#37474F"
-        app:titleTextColor="@android:color/white"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextColor="@android:color/white"/>
 
-</LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_recommendation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_recommendation_add"
+        android:layout_below="@id/my_toolbar"
+        android:overScrollMode="never">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/btn_recommendation_add"
+        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:background="#388E3C"
+        android:enabled="false"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:text="@string/btn_recomendation_recommend"
+        android:textSize="20sp"/>
+
+</RelativeLayout>

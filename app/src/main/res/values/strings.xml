@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name" translatable="false">Рекомендации</string>
+    <string name="btn_recomendation_recommend">Добавить</string>
 </resources>
