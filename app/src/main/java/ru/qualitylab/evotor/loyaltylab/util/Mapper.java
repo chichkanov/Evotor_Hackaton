@@ -1,5 +1,9 @@
 package ru.qualitylab.evotor.loyaltylab.util;
 
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,5 +31,30 @@ public class Mapper {
             returnList.add(Mapper.convertProductToPostition(product));
         }
         return returnList;
+    }
+
+    public static String createUidBodyFromReceipt(List<Position> list) {
+        JSONArray jsonArray = new JSONArray();
+        for (Position position : list) {
+            jsonArray.put(getUidFromBarcode(position.getProductCode()));
+        }
+        Gson gson = new Gson();
+        Logger.log("Post body: " + gson.toJson(jsonArray));
+        return new Gson().toJson(jsonArray);
+    }
+
+    private static String getUidFromBarcode(String code) {
+        switch (code) {
+            case "1":
+                return "1171600";
+            case "3":
+                return "3780640";
+            case "4":
+                return "1950869";
+            case "5":
+                return "9685";
+            default:
+                return "1";
+        }
     }
 }

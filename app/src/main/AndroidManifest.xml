@@ -11,6 +11,8 @@
     <!-- Поддержка сторонней платёжной системы -->
     <uses-permission android:name="ru.evotor.permission.PAYMENT_SYSTEM"/>
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,7 +31,7 @@
             <!-- Фон, на котором отображается иконка приложения. -->
             <meta-data
                 android:name="ru.evotor.launcher.BACKGROUND_COLOR"
-                android:value="#133788"/>
+                android:value="#FF4E61"/>
 
             <intent-filter>
                 <category android:name="android.intent.category.EVOTOR"/>
@@ -43,7 +45,7 @@
             android:label="Рекомендации">
             <meta-data
                 android:name="ru.evotor.sales_screen.BACKGROUND_COLOR"
-                android:value="#133788"/>
+                android:value="#FF4E61"/>
 
             <intent-filter android:priority="20">
                 <category android:name="android.intent.category.DEFAULT"/>

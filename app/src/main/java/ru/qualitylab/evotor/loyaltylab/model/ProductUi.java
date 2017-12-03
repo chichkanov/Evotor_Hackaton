@@ -6,10 +6,9 @@ public class ProductUi {
     private double price;
     private boolean enabled;
 
-    public ProductUi(String name, double price, boolean enabled) {
+    public ProductUi(String name, double price) {
         this.name = name;
         this.price = price;
-        this.enabled = enabled;
     }
 
     public String getName() {
@@ -24,7 +23,7 @@ public class ProductUi {
         return price;
     }
 
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 

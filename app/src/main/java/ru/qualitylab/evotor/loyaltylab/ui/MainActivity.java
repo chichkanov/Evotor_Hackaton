@@ -2,6 +2,7 @@ package ru.qualitylab.evotor.loyaltylab.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +16,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -27,8 +27,12 @@ import ru.evotor.framework.navigation.NavigationApi;
 import ru.evotor.framework.receipt.Receipt;
 import ru.evotor.framework.receipt.ReceiptApi;
 import ru.qualitylab.evotor.loyaltylab.R;
+import ru.qualitylab.evotor.loyaltylab.api.RecommendationApi;
+import ru.qualitylab.evotor.loyaltylab.api.Retrofitik;
 import ru.qualitylab.evotor.loyaltylab.model.ProductUi;
 import ru.qualitylab.evotor.loyaltylab.util.ChangesCreator;
+import ru.qualitylab.evotor.loyaltylab.util.Logger;
+import ru.qualitylab.evotor.loyaltylab.util.Mapper;
 
 public class MainActivity extends IntegrationAppCompatActivity {
 
@@ -53,16 +57,24 @@ public class MainActivity extends IntegrationAppCompatActivity {
     }
 
     private void initRecommendationLoading() {
-        compositeDisposable.add(Completable
-                .fromAction(() -> Thread.sleep(2000))
-                .doOnSubscribe(l -> showLoading())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doFinally(this::hideLoading)
-                .subscribe(() -> updateRv(getFakeDataset()),
-                        error -> {
-                            // stub
-                        }));
+        Receipt receipt = ReceiptApi.getReceipt(this, Receipt.Type.SELL);
+        if (receipt != null) {
+            Logger.log("Download started!");
+            compositeDisposable.add(Retrofitik.getInstanse()
+                    .create(RecommendationApi.class)
+                    .getRecommendations(Mapper.createUidBodyFromReceipt(receipt.getPositions()))
+                    .doOnSubscribe(l -> showLoading())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doFinally(this::hideLoading)
+                    .subscribe(recommendations -> updateRv(getFakeDataset()),
+                            error -> {
+                                Snackbar.make(addButton, "Произошла ошибка!", Snackbar.LENGTH_SHORT).show();
+                                Logger.log(error.getMessage());
+                            }));
+        } else {
+            Snackbar.make(addButton, "Отсутствуют товары в чеке!", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     private void updateRv(List<ProductUi> productList) {
@@ -136,12 +148,12 @@ public class MainActivity extends IntegrationAppCompatActivity {
 
     private List<ProductUi> getFakeDataset() {
         List<ProductUi> list = new ArrayList<>();
-        list.add(new ProductUi("Водочка Грей Гус", 1500, false));
-        list.add(new ProductUi("Водочка Хорошая", 200, false));
-        list.add(new ProductUi("Водочка Каждый День", 108, false));
-        list.add(new ProductUi("Пиво Балтика", 70, false));
-        list.add(new ProductUi("Сухарики Воронцовские", 30, false));
-        list.add(new ProductUi("Пакет Маечка", 2, false));
+        list.add(new ProductUi("Водочка Грей Гус", 1500));
+        list.add(new ProductUi("Водочка Хорошая", 200));
+        list.add(new ProductUi("Водочка Каждый День", 108));
+        list.add(new ProductUi("Пиво Балтика", 70));
+        list.add(new ProductUi("Сухарики Воронцовские", 30));
+        list.add(new ProductUi("Пакет Маечка", 2));
         return list;
     }
 
