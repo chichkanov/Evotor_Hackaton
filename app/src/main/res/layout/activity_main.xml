@@ -4,9 +4,17 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
                 android:background="#37474F"
                 android:orientation="vertical"
                 tools:context="ru.qualitylab.evotor.loyaltylab.ui.MainActivity">
+
+    <ProgressBar
+        android:id="@+id/progress_recommendation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -33,6 +41,7 @@
         android:layout_height="64dp"
         android:layout_alignParentBottom="true"
         android:background="#388E3C"
+        android:alpha="0"
         android:enabled="false"
         android:foreground="?android:attr/selectableItemBackground"
         android:text="@string/btn_recomendation_recommend"

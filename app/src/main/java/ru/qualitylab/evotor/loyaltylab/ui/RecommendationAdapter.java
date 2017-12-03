@@ -40,12 +40,7 @@ public class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAd
         holder.state.setChecked(dataset.get(position).isEnabled());
         holder.price.setText(String.valueOf(dataset.get(position).getPrice()));
         holder.name.setText(dataset.get(position).getName());
-        holder.state.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onCLick(holder.getAdapterPosition());
-            }
-        });
+        holder.state.setOnClickListener(view -> listener.onCLick(holder.getAdapterPosition()));
     }
 
     void setDataset(List<ProductUi> dataset) {
@@ -65,10 +60,10 @@ public class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAd
         return false;
     }
 
-    List<Position> getSelectedItemsPositions(){
+    List<Position> getSelectedItemsPositions() {
         List<ProductUi> returnList = new ArrayList<>();
-        for(ProductUi product : dataset){
-            if(product.isEnabled()){
+        for (ProductUi product : dataset) {
+            if (product.isEnabled()) {
                 returnList.add(product);
             }
         }
