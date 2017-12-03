@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_toStartOf="@+id/switch_item_recommendation"
         android:textColor="@android:color/white"
-        android:textSize="24sp"
+        android:textSize="20sp"
         tools:text="Водочка Грей Гус"/>
 
     <TextView

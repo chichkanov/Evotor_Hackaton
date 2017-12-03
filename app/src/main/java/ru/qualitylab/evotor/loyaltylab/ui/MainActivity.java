@@ -29,6 +29,7 @@ import ru.evotor.framework.receipt.ReceiptApi;
 import ru.qualitylab.evotor.loyaltylab.R;
 import ru.qualitylab.evotor.loyaltylab.api.RecommendationApi;
 import ru.qualitylab.evotor.loyaltylab.api.Retrofitik;
+import ru.qualitylab.evotor.loyaltylab.model.MyBody;
 import ru.qualitylab.evotor.loyaltylab.model.ProductUi;
 import ru.qualitylab.evotor.loyaltylab.util.ChangesCreator;
 import ru.qualitylab.evotor.loyaltylab.util.Logger;
@@ -60,14 +61,15 @@ public class MainActivity extends IntegrationAppCompatActivity {
         Receipt receipt = ReceiptApi.getReceipt(this, Receipt.Type.SELL);
         if (receipt != null) {
             Logger.log("Download started!");
+            MyBody myBody = new MyBody(Mapper.createUidBodyFromReceipt(receipt.getPositions()));
             compositeDisposable.add(Retrofitik.getInstanse()
                     .create(RecommendationApi.class)
-                    .getRecommendations(Mapper.createUidBodyFromReceipt(receipt.getPositions()))
+                    .getRecommendations(myBody)
                     .doOnSubscribe(l -> showLoading())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doFinally(this::hideLoading)
-                    .subscribe(recommendations -> updateRv(getFakeDataset()),
+                    .subscribe(list -> updateRv(list.getProducts()),
                             error -> {
                                 Snackbar.make(addButton, "Произошла ошибка!", Snackbar.LENGTH_SHORT).show();
                                 Logger.log(error.getMessage());
