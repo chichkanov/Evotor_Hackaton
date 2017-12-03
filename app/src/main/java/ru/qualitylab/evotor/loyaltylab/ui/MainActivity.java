@@ -22,7 +22,10 @@ import io.reactivex.schedulers.Schedulers;
 import ru.evotor.framework.core.IntegrationAppCompatActivity;
 import ru.evotor.framework.core.IntegrationManagerFuture;
 import ru.evotor.framework.core.action.command.open_receipt_command.OpenSellReceiptCommand;
+import ru.evotor.framework.core.action.event.receipt.changes.position.PositionAdd;
 import ru.evotor.framework.navigation.NavigationApi;
+import ru.evotor.framework.receipt.Receipt;
+import ru.evotor.framework.receipt.ReceiptApi;
 import ru.qualitylab.evotor.loyaltylab.R;
 import ru.qualitylab.evotor.loyaltylab.model.ProductUi;
 import ru.qualitylab.evotor.loyaltylab.util.ChangesCreator;
@@ -88,7 +91,12 @@ public class MainActivity extends IntegrationAppCompatActivity {
     private void initAddBtn() {
         addButton = findViewById(R.id.btn_recommendation_add);
         addButton.setOnClickListener(view -> {
-            (new OpenSellReceiptCommand(ChangesCreator.createAddChangeList(adapter.getSelectedItemsPositions()), null)).process(context, future -> {
+            List<PositionAdd> list = ChangesCreator.createAddChangeList(adapter.getSelectedItemsPositions());
+            Receipt receipt = ReceiptApi.getReceipt(getApplicationContext(), Receipt.Type.SELL);
+            if (receipt != null) {
+                list.addAll(ChangesCreator.createAddChangeList(receipt.getPositions()));
+            }
+            (new OpenSellReceiptCommand(list, null)).process(context, future -> {
                 try {
                     IntegrationManagerFuture.Result result = future.getResult();
                     if (result.getType() == IntegrationManagerFuture.Result.Type.OK) {

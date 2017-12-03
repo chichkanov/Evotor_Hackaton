@@ -17,18 +17,32 @@
         tools:text="Водочка Грей Гус"/>
 
     <TextView
+        android:id="@+id/tv_item_recommendation_price_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/tv_item_recommendation_name"
+        android:text="@string/tv_item_recomendation_price_label"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="20sp"/>
+
+    <TextView
         android:id="@+id/tv_item_recommendation_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_item_recommendation_name"
-        android:textColor="@android:color/white"
-        android:textSize="24sp"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@id/tv_item_recommendation_price_label"
+        android:text="@string/tv_item_recomendation_price"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="20sp"
         tools:text="600 руб."/>
 
     <Switch
         android:id="@+id/switch_item_recommendation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="4dp"/>
 
 </RelativeLayout>

@@ -38,7 +38,7 @@ public class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAd
     @Override
     public void onBindViewHolder(final Holder holder, final int position) {
         holder.state.setChecked(dataset.get(position).isEnabled());
-        holder.price.setText(String.valueOf(dataset.get(position).getPrice()));
+        holder.price.setText(holder.itemView.getResources().getString(R.string.tv_item_recomendation_price, String.valueOf(dataset.get(position).getPrice())));
         holder.name.setText(dataset.get(position).getName());
         holder.state.setOnClickListener(view -> listener.onCLick(holder.getAdapterPosition()));
     }

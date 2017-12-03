@@ -32,8 +32,7 @@
                 android:value="#133788"/>
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.EVOTOR" />
+                <category android:name="android.intent.category.EVOTOR"/>
             </intent-filter>
 
         </activity>
@@ -44,11 +43,11 @@
             android:label="Рекомендации">
             <meta-data
                 android:name="ru.evotor.sales_screen.BACKGROUND_COLOR"
-                android:value="#133788" />
+                android:value="#133788"/>
 
             <intent-filter android:priority="20">
-                <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="evo.v2.receipt.sell.receiptDiscount" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="evo.v2.receipt.sell.receiptDiscount"/>
             </intent-filter>
         </service>
 
